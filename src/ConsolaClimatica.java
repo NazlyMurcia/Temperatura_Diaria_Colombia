@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.ZoneId;
 
 import java.util.*;
 import java.util.List;
@@ -18,8 +19,6 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import datechooser.beans.DateChooserCombo; 
-
-import java.time.ZoneId;
 
 public class ConsolaClimatica extends JFrame {
 
@@ -34,7 +33,7 @@ public class ConsolaClimatica extends JFrame {
     public ConsolaClimatica() {
         setTitle("Análisis de Temperaturas");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 650);
+        setSize(800, 700);
         setLocationRelativeTo(null);
 
         JPanel panel = new JPanel();
@@ -47,6 +46,24 @@ public class ConsolaClimatica extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1; // Para que los campos de texto se expandan
+
+
+        JLabel tituloLabel = new JLabel("CONSOLA CLIMÁTICA", SwingConstants.CENTER);
+        tituloLabel.setFont(new Font("Arial", Font.BOLD, 12)); // Opcional: darle un formato
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2; //columnas para centrar
+        controlPanel.add(tituloLabel, gbc);
+
+        JLabel descripcionLabel = new JLabel("Por favor, elija el rango de fechas para el que desea consultar, a continuación cargue los datos, luego elija la opción mostrar gráfica.", SwingConstants.CENTER);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 2; // Ocupa dos columnas para centrar
+        controlPanel.add(descripcionLabel, gbc);
+
+        gbc.gridwidth = 1;
+
+
 
         JLabel desdeLabel = new JLabel("Fecha Desde:");
         desdeChooser = new DateChooserCombo(); // Inicializamos DateChooserCombo para "Desde"
@@ -73,45 +90,43 @@ public class ConsolaClimatica extends JFrame {
         graficoPanel.setLayout(new BorderLayout());
         graficoPanel.setBorder(BorderFactory.createTitledBorder("Gráfica de Temperaturas Promedio"));
 
-        // Ajuste de GridBagConstraints para mejor distribución
         gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2; 
-        controlPanel.add(cargarButton, gbc);
-
-        gbc.gridwidth = 1;
-        gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         controlPanel.add(desdeLabel, gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 1;
-        controlPanel.add(desdeChooser, gbc); // Agregamos DateChooserCombo para "Desde"
-
-        gbc.gridx = 0;
         gbc.gridy = 2;
-        controlPanel.add(hastaLabel, gbc);
-
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        controlPanel.add(hastaChooser, gbc); // Agregamos DateChooserCombo para "Hasta"
+        controlPanel.add(desdeChooser, gbc); 
 
         gbc.gridx = 0;
         gbc.gridy = 3;
+        controlPanel.add(hastaLabel, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        controlPanel.add(hastaChooser, gbc); 
+
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2; 
+        controlPanel.add(cargarButton, gbc);
+        
+        gbc.gridx = 0;
+        gbc.gridy = 5;
         gbc.gridwidth = 2;
         controlPanel.add(graficarButton, gbc);
 
         gbc.gridwidth = 1;
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 6;
         controlPanel.add(fechaConsultaLabel, gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 4;
-        controlPanel.add(fechaConsultaChooser, gbc); // Agregamos DateChooserCombo para "Consulta"
+        gbc.gridy = 6;
+        controlPanel.add(fechaConsultaChooser, gbc); 
 
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 7;
         gbc.gridwidth = 2;
         controlPanel.add(consultarButton, gbc);
 
@@ -155,7 +170,8 @@ public class ConsolaClimatica extends JFrame {
         }
     }
 
-    private void mostrarGrafica(String desdeStr, String hastaStr) {
+     private void mostrarGrafica(String desdeStr, String hastaStr) {
+        resultadoTextArea.setText("");
         if (registros.isEmpty()) {
             resultadoTextArea.append("Primero debe cargar los datos.\n");
             return;
@@ -167,8 +183,7 @@ public class ConsolaClimatica extends JFrame {
             desde = LocalDate.parse(desdeStr, DATE_FORMATTER);
             hasta = LocalDate.parse(hastaStr, DATE_FORMATTER);
         } catch (DateTimeParseException e) {
-            resultadoTextArea.append("Error en el formato de fecha. Use dd/MM/yyyy.\n");
-            return;
+            
         }
 
         if (desde.isAfter(hasta)) {
@@ -181,9 +196,12 @@ public class ConsolaClimatica extends JFrame {
         Map<String, Double> promedioPorCiudad = AnalizadorTemperatura.calcularPromedioPorCiudad(registrosFiltrados);
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        for (Map.Entry<String, Double> entry : promedioPorCiudad.entrySet()) {
+            for (Map.Entry<String, Double> entry : promedioPorCiudad.entrySet()) {
             dataset.addValue(entry.getValue(), "Promedio", entry.getKey());
-        }
+
+}
+
+
 
         JFreeChart grafico = ChartFactory.createBarChart(
                 "Promedio de Temperatura por Ciudad",

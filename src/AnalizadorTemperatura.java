@@ -16,12 +16,12 @@ import java.util.stream.Collectors;
     
         // Constante para el formato de fecha utilizado en el archivo CSV
         private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    
-        public static List<RegistroTemperatura> leerDatosDesdeCSV(String rutaArchivo) throws IOException {
-        List<RegistroTemperatura> registros = new ArrayList<>();
-        //try-with-resources para asegurar que el BufferedReader se cierre automáticamente
-        try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Antivirus\\Desktop\\EJERCICIOS LABORATORIO\\PARCIAL 2\\Temperaturas.csv", StandardCharsets.UTF_8))) {
-            String linea;
+        
+            public static List<RegistroTemperatura> leerDatosDesdeCSV(String rutaArchivo) throws IOException {
+            List<RegistroTemperatura> registros = new ArrayList<>();
+            //try-with-resources para asegurar que el BufferedReader se cierre automáticamente
+            try (BufferedReader br = new BufferedReader(new FileReader("bin\\datos\\Temperaturas.csv", StandardCharsets.UTF_8))) {
+                String linea;
             br.readLine(); // Leer y descartar la primera línea de encabezado
             while ((linea = br.readLine()) != null) {
                 String[] partes = linea.split(",");
